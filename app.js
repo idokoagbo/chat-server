@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const app = express();
+app.use(bodyParser.json());
 const mongoose = require('mongoose');
 mongoose.connect('mongodb+srv://chat-server-user:jvZclyYOnZaR1DDY@idokoagbo1.1iuva.mongodb.net/?retryWrites=true&w=majority', { useNewUrlParser: true });
 
@@ -26,11 +28,10 @@ app.use(express.static(__dirname + '/public'));
 // login
 app.post('/login', (req, res, next) => {
 
-    const email = req.body.username.toLowerCase();
-    const password = req.body.password;
+    const { username, password } = req.body;
 
     User.find({
-        email: email,
+        email: username,
         password: password,
     }, (error, user) => {
         if (error) {
@@ -56,6 +57,28 @@ app.get('/responses', (req, res, next) => {
 
         return res.send(document);
     });
+
+});
+
+// add new message response
+app.post('/responses', (req, res, next) => {
+
+    console.log(req.body);
+
+    const { prompt, response } = req.body;
+
+    const newResponse = new Response({
+        message: prompt,
+        response: response,
+    });
+
+    newResponse.save((error, document) => {
+        if (error) {
+            return res.status(500).send(error);
+        }
+
+        return res.send(document);
+    })
 
 });
 
