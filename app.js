@@ -110,7 +110,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('message', (msg) => {
-        const text = msg.split(":");
+        const text = msg.split(": ");
         const sender = text[0];
         const body = text.pop();
         // save message to db
